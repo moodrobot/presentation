@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Testing React with Jest, Enzyme, and Sinon</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/blood.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides" data-background="images/seamless-dark-texture-with-small-grid.png" data-background-repeat="repeat" data-background-size="100px">
+				<section data-background="images/seamless-dark-texture-with-small-grid.png" data-background-repeat="repeat" data-background-size="50px">
+					<h2>Testing & React</h2>
+					<h3><span class="fragment">Jest,</span> <span class="fragment">Enzyme,</span><span class="fragment"> and Sinon</span></h3>
+					<p>
+						<small class="fragment">Created by Jed  Bursiek <span style="color:greenyellow">- Green Badge</span></small>
+					</p>
+				</section>
+				<section>
+					<p>Disclaimer</p>
+					<p class="fragment">The opinions stated in this presentation are the result of research into the current trends in the React community - there are other ways to test React.</p>
+					<p class="fragment">But this is probably the best way.</p>
+				</section>
+				<section>
+					<h3>Why Write tests?</h3>
+					<p class="fragment">Isn't that just extra work?</p>
+				</section>
+				<section>
+					<p>We write tests to..</p>
+					<ul>
+						<li class="fragment">Prevent code from breaking while refactoring</li>
+						<li class="fragment">Prevent other developers from breaking your code</li>
+						<li class="fragment">Prevent new code breaking old code</li>
+						<li class="fragment">Note changes in the UI with <span style="color:yellow">Snapshots</span></li>
+					</ul>
+				</section>
+				
+				<!--<section>
+					<h3>When to write tests?</h3>
+					
+					<p class="fragment">The sooner the better. <br />Let us reap the wonderful benefits of testing.</p>
+					
+				</section>-->
+				<section>
+					<img src = "images/scaffold.jpg" />
+				</section>
+				<!-- Example of nested vertical slides -->
+				<section>
+					<section>
+						<h2>Jest</h2>
+						<p class="fragment">What is it?</p>
+					</section>
+					<section>
+						<img src="images/head-tilt.jpg" />
+					</section>
+					<section>
+						<p>Jest is a testing framework for JavaScript
+						<p class="fragment">authored by Facebook</p>	
+						<p class="fragment">...the same group who created  React</p>	
+					</section>
+					<section>
+						<h2>Wait a second...</h2>
+					</section>
+					<section>
+						<h3>What the heck is REACT?</h3>
+					</section>
+					<section>
+						React is a JavaScript library <br />for building componentized user interfaces
+					</section>
+					<section>
+						<p>Components have two types of data</p>
+						<li class="fragment">state</li>
+						<li class="fragment">props</li>
+					</section>
+					<section>
+						<p>State data is specific to a component (class)</p>
+						<p class="fragment">Props data is passed between components</p>
+					</section>
+					<section>
+						<img src="images/03-state-vs-props.png" />
+					</section>
+					<section>
+							<p>React is most commonly used with JSX <br />(Javascript Syntax Extension)</p>
+							<p class="fragment">JSX is a <span style="color:orange">declarative</span> XML/JavaScript hybrid language</p>
+							<p class="fragment">Which gets transpiled into browser readable <br />JavaScript and HTML</p>
+					</section>
+					<section>
+						<h4>Imperative vs Declarative</h4>
+					</section>
+					<section>
+						<pre>
+<h4>Imperative</h4><code class="fragment"><header> 
+  <div class="name">
+    Not Logged In
+  </div>
+</header> 
+
+$.post('/login', credentials, function( user ) {
+  // Modify the DOM
+  $('header .name').text( user.name );
+});</code>
+<h4 class="fragment">Declarative</h4><code class="fragment">render: function() {  
+  const name = this.state.name;
+  return 
+    <header>
+      { name ? name : <span>Not Logged In</span> }
+    </header>
+};</code>
+						</pre>
+					</section>
+					<section>
+						<table>
+						  <tr>
+							<td style="text-align: center">
+							  Imperative<br />	
+							  <img src="images/magician.png" width="400px"/>
+							</td>
+							<td class="fragment" style="vertical-align: middle"><h3>VS</h3></td>
+							<td style="text-align: center" class="fragment">
+							  Declarative<br />
+							  <img src="images/coffee-beautiful-cup-3.jpg" />
+							</td>
+						  </tr>
+						</table>
+					</section>
+					<section>
+						<p>When the state or props are updated the component will re-render</p>
+					</section>
+					<section>
+						<p>To render output React uses a heuristic method<br /> that diffs the existing component tree <br />
+							with the new desired tree</p>
+					</section>
+					<section>
+						<img src="images/tree.jpg" /><br />
+						<img src="images/Facebook-create.png" width="250" />
+					</section>	
+					<section>
+						<p>The diff-ing takes place in the Virtual Dom</p>
+						<img class="fragment" src="images/virtualdom.jpg" width="500px"/><br />
+						<p class="fragment">which makes it fast</p>
+					</section>
+					<section>
+						<h5>When the update is called it triggers <br />all these life-cycle methods</h5>
+						<ul>
+						  <li>componentWillReceiveProps()</li>
+						  <li>shouldComponentUpdate()</li>
+						  <li>componentWillUpdate()</li>
+						  <li>render()</li>
+						  <li>componentDidUpdate()</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Why use Jest?</h2>
+						<ul>
+							<li class="fragment">Snapshots</li>
+							<li class="fragment">Now supports async testing</li>
+							<li class="fragment">Facebook does it</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Snapshots</h3>
+						<p>Snapshots are rendered versions of a particular state.</p>
+						<p class="fragment">HTML generated by the React component is saved auto-magically into snapshot file</p>
+						<p class="fragment">Testing will compare snapshot files against the rendered version and output any differences</p>
+					</section>
+					<section>
+						<img src="images/spot-the-difference.jpg" width="800" />
+						<img class="fragment" style="position:absolute; top:150px; left: 730px; background:none; border:none; box-shadow:none;" width="180px" src="images/drawn-circle-transparent-red-8.png" />
+						<img class="fragment" style="position:absolute; top:290px; left: 740px; background:none; border:none; box-shadow:none;" width="200px" src="images/drawn-circle-transparent-red-8.png" />
+						<img class="fragment" style="position:absolute; top:250px; left: 640px; background:none; border:none; box-shadow:none;" width="150px" src="images/drawn-circle-transparent-red-8.png" />	
+					</section>
+					<section>
+							<h3>Async Tests</h3>
+							<p>Jest has been revamped considerably in the last few years can now handle async tests.</p>
+						</section>
+					<section>
+						<h3>Facebook does it</h3>
+						<p>Jest is used by Facebook to test React applications</p>
+						<p class="fragment">So they made it easy...</p>
+						<p class="fragment">Put your test scripts inside <br />__tests__ directory and run $npm test</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+					<h2>Enzyme</h2>
+					<p class="fragment">
+						What is it?
+					</p>
+					</section>
+					<section>
+						<img src="images/kitty-tilt.jpg" width="400px"/>
+					</section>
+					<section>
+					<p>
+						Enzyme is a wrapper that makes it simpler <br />to write unit tests with Jest. 
+						<ul>
+						<li class="fragment">helpers to easily traverse a react component tree</li>
+						<li class="fragment">set state and props for testing</li>	
+						</ul>
+					</p>
+					</section>
+					<section>
+						<pre>
+<h4>ParentComponent</h4>
+<code style="display: inline-block; width: 900px; height: 800px">class ParentComponent extends Component {
+  constructor(){
+    this.state = {value: "Hello"}
+  }
+  handleClick(){
+    this.setState({value: "Goodbye"});
+  }
+  render() {
+    return(
+      &lt;button onClick={handleClick}&gt;{this.state.value}&lt;/button&gt;
+      &lt;ChildComponent /&gt;
+    );
+  }
+}</code>	
+							</pre>
+							</section>
+							<section>
+							<pre>
+<h4>ChildComponent</h4>
+<code style="display: inline-block; width: 700px; height: 200px">class ChildComponent extends Component {
+  render() {
+    return(
+      &lt;h2&gt;World&lt;/h2&gt;
+    );
+  }
+}</code>
+							</pre>
+					</section>
+					<section>
+						Shallow Test
+						<pre>
+//__tests__							
+
+import { shallow } from "enzyme";
+import ParentComponent from "../ParentComponent";
+
+const wrapper = <span style="color:orange">shallow</span>(<span style="color:aquamarine">&lt;ParentComponent /&gt;</span>);
+
+<span class="fragment">console.log(wrapper.debug());</span>
+<span class="fragment">
+----------------------
+		
+&lt;button&gt;Hello&lt;/button&gt;
+<span style="color:aquamarine">&lt;ChildComponent /&gt;</span>
+
+</span>
+						</pre>
+					</section>
+					<section>
+						Mount Test
+						<pre>
+//__tests__							
+								
+import { mount } from "enzyme";
+import ParentComponent from "../ParentComponent";
+
+const wrapper = <span style="color:orange">mount</span> (<span style="color:aquamarine">&lt;ParentComponent /&gt;</span>);
+
+<span class="fragment">console.log(wrapper.debug());</span>
+<span class="fragment">
+----------------------
+
+&lt;button&gt;Hello&lt;/button&gt;
+<span style="color:orange">&lt;h2&gt;World&lt;/h2&gt;</span>
+
+</span>
+						</pre>
+					</section>
+					<section>
+						Snapshot Test
+						<pre>
+//__tests__							
+
+import { shallow } from "enzyme";
+import ParentComponent from "../ParentComponent";
+
+const wrapper = <span style="color:orange">shallow</span>(<span style="color:aquamarine">&lt;ParentComponent /&gt;</span>);
+
+<span class="fragment" style="color:rgb(248, 255, 155)">expect(wrapper.toMatchSnapshot());</span>
+<span class="fragment">
+----------------------
+<span style="color:red">FAIL</span>
+
+&lt;button&gt;Hello<span class="fragment highlight-red">r</span>&lt;/button&gt;
+&lt;ChildComponent /&gt;
+
+</span>
+
+						</pre>
+					</section> 
+					<section>
+						Simulate Click
+						<pre>
+//__tests__							
+
+import { shallow } from "enzyme";
+import ParentComponent from "../ParentComponent";
+
+const wrapper = <span style="color:orange">shallow</span>(<span style="color:aquamarine">&lt;ParentComponent /&gt;</span>);
+<span class="fragment">
+//CLICK SETS STATE TO "Goodbye"
+wrapper.find('<span style="color:pink">button</span>').simulate("click");</span>
+<span class="fragment">wrapper.update();
+	
+<span class="fragment" style="color:rgb(248, 255, 155)">expect(wrapper.find("button").text().toBe("Goodbye"));</span>
+
+<span class="fragment">console.log(wrapper.debug());</span> 
+<span class="fragment">
+----------------------
+<span style="color:green">PASS</span>
+
+&lt;button&gt;Goodbye&lt;/button&gt;
+&lt;ChildComponent /&gt;
+
+</span>
+
+						</pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+					<h2>Sinon</h2>
+					<p class="fragment">
+						What is it?
+					</p>
+					</section>
+					<section>
+						<img src="images/head-tilt-2.jpg" />
+					</section>
+					<section>
+					<p>
+						Standalone unit testing library for JavaScript.<br /> Supplies spies, stubs and mocks.
+					</p>
+					</section>
+					<section>
+					<h2>How to use it?</h2>
+					<ul>
+						<li>Spy on functions</li>
+						<li>Stub functions</li>
+					</ul>
+							
+					</p>
+					</section>
+					<section>
+						<p>Common Types of Spy</p>
+						<ul>
+							<li>spy.called;</li>
+							<li>spy.returned(obj);</li>
+							<li>spy.threw();</li>
+							<li>spy.args</li>
+						</ul>
+					</section>
+					<section>
+					Spy on Functions
+					<pre>
+						
+//__tests__							
+
+import { shallow } from "enzyme";
+import { sinon } fom "sinon";
+import ParentComponent from "../ParentComponent";
+
+<span class="fragment" style="color:rgb(248, 255, 155)">const spyFunc = sinon.spy(ParentComponent.prototype, "handleClick");</span>
+<span class="fragment">
+const wrapper = <span style="color:orange">shallow</span>(<span style="color:aquamarine">&lt;ParentComponent /&gt;</span>);
+
+wrapper.find('<span style="color:pink">button</span>').simulate("click");
+wrapper.update();
+</span><span class="fragment">
+//CHECK FUNCTION CALLED
+<span style="color:rgb(248, 255, 155)">expect(spyFunc.called).toBe(true);
+</span>	
+					</pre>
+					</section>
+					<section>
+						<p>Common Types of Stub</p>
+						<ul>
+							<li>stub(obj, 'method').callsFake(fakeFunction);</li>
+							<li>stub.returns(obj);</li>
+							<li>stub.throws("TypeError");</li>
+						</ul>
+					</section>
+					<section>
+						<pre>
+<h4>ParentComponent</h4>
+<code style="display: inline-block; width: 900px; height: 800px">class ParentComponent extends Component {
+  constructor(){
+    this.state = {value: "Hello"};
+  }
+  handleClick(){
+    const msg = axios.get("api/getMessage");
+    this.setState({value: msg});
+  }
+  render() {
+    return(
+      &lt;button onClick={handleClick}&gt;{this.state.value}&lt;/button&gt;
+    );
+  }
+}</code>
+						</pre>
+					</section>
+					<section>
+					Stub Functions
+					<pre>
+//__tests__							
+
+import { shallow } from "enzyme";
+import { sinon } fom "sinon";
+import ParentComponent from "../ParentComponent";
+<span class="fragment" style="color:rgb(248, 255, 155)">
+const stubFunc = sinon.stub(ParentComponent.prototype, "handleClick");
+</span><span class="fragment">const wrapper = <span style="color:orange">shallow</span>(<span style="color:aquamarine">&lt;ParentComponent /&gt;</span>);</span>
+<span class="fragment" style="color:rgb(248, 255, 155)">
+const fn = function(){
+  wrapper.setState("Message");
+}</span> <span class="fragment" style="color:rgb(248, 255, 155)">
+stubFunc.callsFake(fn);
+</span><span class="fragment">
+wrapper.find('<span style="color:pink">button</span>').simulate("click");
+wrapper.update();
+</span><span class="fragment" style="color:rgb(248, 255, 155)">expect(wrapper.find("button").text().toBe("Message"));</span>
+<span class="fragment">
+----------------------
+<span style="color:green">PASS</span>
+
+&lt;button&gt;Message&lt;/button&gt;
+					</pre>
+					</section>
+				</section>
+				<section>
+					Verbose Output with Summary<br />
+					<img src="images/example-output.png" width="700" />
+				</section>
+				<section>
+					<section>
+						<h3>Setup</h3>
+						<ul>
+							<li>node install</li>
+							<li>package.json</li>
+							<li>jestsetup.js</li>
+							<li>shim.js</li>
+						</ul>
+					</section>
+					<section>
+						<pre>
+$npm install --save-dev enzyme enzyme-adapter-react-16 enzyme-to-json
+						</pre>
+					</section>
+					<section>
+						package.json
+						<pre class="javascript" style="font-size: 24px;">	
+"jest": {
+	"setupFiles": [
+		"./test/shim.js",
+		"./test/jestsetup.js"
+	],
+	"snapshotSerializers": [
+		"enzyme-to-json/serializer"
+	]
+}
+						</pre>
+					</section>
+					<section>
+						jestsetup.js
+						<pre class="javascript" style="font-size: 24px;">	
+// React 16 Enzyme adapter
+import Adapter from 'enzyme-adapter-react-16';
+
+Enzyme.configure({ adapter: new Adapter() });	
+						</pre>
+					</section>
+					<section>
+						shim.js
+						<pre class="javascript" style="font-size: 24px;">	
+global.requestAnimationFrame = function(callback) {
+	setTimeout(callback, 0);
+};
+						</pre>
+					</section>
+				</section>
+
+				<section>
+					<h1>FIN</h1>
+					<p class="fragment">Next time - "Socio-economic effects of Intel's BBCS"<br /><br /></p>
+				</section>
+				<section>
+						<p>Beverage Based Caste System</p>
+					<img src="images/blue_drink.jpg" />
+				</section>
+				<section>
+					<h3>Resources</h3>
+					<ul>
+						<li>React<br/><a href="https://reactjs.org/">https://reactjs.org/</a></li>
+						<li>Intro to Enzyme and React<br/><a href="https://jonbellah.com/articles/intro-react-testing/">https://jonbellah.com/articles/intro-react-testing/</a></li>
+						<li>Enzyme Cheat Sheet<br/><a href="https://devhints.io/enzyme">https://devhints.io/enzyme</a></li>
+						<li>Sinon Stubs<br /><a href="http://sinonjs.org/releases/v4.1.3/stubs/">http://sinonjs.org/releases/v4.1.3/stubs/</li>
+					</ul>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					//{ src: 'plugin/prism/prism.js', async: true},
+					{ src: 'plugin/search/search.js', async: true },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
